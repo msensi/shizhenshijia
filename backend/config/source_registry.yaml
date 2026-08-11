@@ -1,0 +1,783 @@
+# 来源注册表（PRD 5.2/5.3；SPEC 第 10 节）
+# 开放搜索权威判定依据：域名精确匹配 > 转载作者别名匹配 > 抓正文模型兜底
+version: 2
+
+# ── 指定权威站（第二级证据链，include 域名限定用）────────────────
+designated_sites:
+  - key: piyao
+    name: 中国互联网联合辟谣平台
+    domain: www.piyao.org.cn
+    publisher: 中国互联网联合辟谣平台
+    paths:
+      - /
+      - /bq/index.htm
+      - /ld.htm
+      - /zt.htm
+    use_for: [policy, news, scam]
+  - key: kepuchina
+    name: 科学辟谣平台（科普中国）
+    domain: piyao.kepuchina.cn
+    publisher: 科学辟谣平台
+    paths:
+      - /rumor/rumorlist
+      - /rumor/rumordetail
+      - /hotlist/hotlist
+    use_for: [health, news]
+  - key: nhc
+    name: 国家卫生健康委员会
+    domain: www.nhc.gov.cn
+    publisher: 国家卫生健康委员会
+    paths:
+      - /kppypt/index.shtml
+      - /wjw/jkfw/jkfw.shtml
+    use_for: [health]
+
+# 交叉转载去重：同机制矩阵内按原始发布主体优先
+dedupe_groups:
+  - [www.piyao.org.cn, piyao.kepuchina.cn]
+
+# ── 权威来源注册表（第三级开放搜索用）──────────────────────────
+# 四档：gov_original（政府原始发布，证据力最强，单条可定论）
+#       national_media（国家级官媒，单条可定论）
+#       provincial_media（省级党报党台/市场化官媒，两条独立来源可定论）
+#       local_official（地市级官方，两条独立来源可定论）
+# aliases 用于转载作者匹配：snippet/正文出现"新华社电""来源：人民网"等即命中
+authority_sources:
+
+  # ── gov_original：政府与监管（*.gov.cn 泛匹配之外的专用域名 + 别名）──
+  - name: 中国政府网
+    tier: gov_original
+    domains: [www.gov.cn, sousuo.www.gov.cn]   # 不写裸 gov.cn——endswith(".gov.cn") 会误吞所有政府网站
+    aliases: [中国政府网, 国务院, 国务院办公厅]
+    use_for: [policy, health, scam, news]
+  - name: 国家发展和改革委员会
+    tier: gov_original
+    domains: [www.ndrc.gov.cn, ndrc.gov.cn]
+    aliases: [国家发展改革委, 国家发改委, 发展改革委, ndrc]
+    use_for: [policy]
+  - name: 国家能源局
+    tier: gov_original
+    domains: [www.nea.gov.cn, nea.gov.cn]
+    aliases: [国家能源局]
+    use_for: [policy]
+  - name: 工业和信息化部
+    tier: gov_original
+    domains: [www.miit.gov.cn, miit.gov.cn]
+    aliases: [工业和信息化部, 工信部]
+    use_for: [policy, scam]
+  - name: 民政部
+    tier: gov_original
+    domains: [www.mca.gov.cn, mca.gov.cn]
+    aliases: [民政部]
+    use_for: [policy]
+  - name: 人力资源和社会保障部
+    tier: gov_original
+    domains: [www.mohrss.gov.cn, mohrss.gov.cn]
+    aliases: [人力资源和社会保障部, 人社部, 人力资源社会保障部]
+    use_for: [policy]
+  - name: 国家医疗保障局
+    tier: gov_original
+    domains: [www.nhsa.gov.cn, nhsa.gov.cn]
+    aliases: [国家医疗保障局, 国家医保局]
+    use_for: [policy, health]
+  - name: 国家卫生健康委员会
+    tier: gov_original
+    domains: [www.nhc.gov.cn, nhc.gov.cn]
+    aliases: [国家卫生健康委员会, 国家卫健委, 卫生健康委, 健康中国]
+    use_for: [health]
+  - name: 国家疾病预防控制局
+    tier: gov_original
+    domains: [www.chinacdc.cn, chinacdc.cn]
+    aliases: [中国疾控中心, 中国疾病预防控制中心, 国家疾控局]
+    use_for: [health]
+  - name: 国家药品监督管理局
+    tier: gov_original
+    domains: [www.nmpa.gov.cn, nmpa.gov.cn]
+    aliases: [国家药品监督管理局, 国家药监局]
+    use_for: [health]
+  - name: 公安部
+    tier: gov_original
+    domains: [www.mps.gov.cn, mps.gov.cn]
+    aliases: [公安部, 国家反诈中心]
+    use_for: [scam]
+  - name: 中国人民银行
+    tier: gov_original
+    domains: [www.pbc.gov.cn, pbc.gov.cn]
+    aliases: [中国人民银行, 央行]
+    use_for: [scam, policy]
+  - name: 国家金融监督管理总局
+    tier: gov_original
+    domains: [www.nfra.gov.cn, nfra.gov.cn, www.cbirc.gov.cn]
+    aliases: [国家金融监督管理总局, 金融监管总局, 银保监会]
+    use_for: [scam, policy]
+  - name: 中国证券监督管理委员会
+    tier: gov_original
+    domains: [www.csrc.gov.cn, csrc.gov.cn]
+    aliases: [中国证监会, 证监会]
+    use_for: [scam, policy]
+  - name: 中央网络安全和信息化委员会办公室
+    tier: gov_original
+    domains: [www.cac.gov.cn, cac.gov.cn]
+    aliases: [中央网信办, 国家网信办, 网信办]
+    use_for: [news, scam, policy]
+  - name: 应急管理部
+    tier: gov_original
+    domains: [www.mem.gov.cn, mem.gov.cn]
+    aliases: [应急管理部]
+    use_for: [news]
+  - name: 教育部
+    tier: gov_original
+    domains: [www.moe.gov.cn, moe.gov.cn]
+    aliases: [教育部]
+    use_for: [policy]
+  - name: 财政部
+    tier: gov_original
+    domains: [www.mof.gov.cn, mof.gov.cn]
+    aliases: [财政部]
+    use_for: [policy]
+  - name: 住房和城乡建设部
+    tier: gov_original
+    domains: [www.mohurd.gov.cn, mohurd.gov.cn]
+    aliases: [住房和城乡建设部, 住建部]
+    use_for: [policy]
+  - name: 交通运输部
+    tier: gov_original
+    domains: [www.mot.gov.cn, mot.gov.cn]
+    aliases: [交通运输部]
+    use_for: [policy, news]
+  - name: 农业农村部
+    tier: gov_original
+    domains: [www.moa.gov.cn, moa.gov.cn]
+    aliases: [农业农村部]
+    use_for: [policy]
+  - name: 商务部
+    tier: gov_original
+    domains: [www.mofcom.gov.cn, mofcom.gov.cn]
+    aliases: [商务部]
+    use_for: [policy]
+  - name: 国家市场监督管理总局
+    tier: gov_original
+    domains: [www.samr.gov.cn, samr.gov.cn]
+    aliases: [国家市场监督管理总局, 市场监管总局]
+    use_for: [health, scam, policy]
+  - name: 国家税务总局
+    tier: gov_original
+    domains: [www.chinatax.gov.cn, chinatax.gov.cn]
+    aliases: [国家税务总局]
+    use_for: [policy]
+  - name: 中国气象局
+    tier: gov_original
+    domains: [www.cma.gov.cn, cma.gov.cn, www.nmc.cn, nmc.cn]
+    aliases: [中国气象局, 中央气象台, 国家气象中心]
+    use_for: [news]
+  - name: 中国地震台网
+    tier: gov_original
+    domains: [www.ceic.ac.cn, ceic.ac.cn, www.cenc.ac.cn]
+    aliases: [中国地震台网, 中国地震台网速报, 中国地震局]
+    use_for: [news]
+  - name: 国家信访局
+    tier: gov_original
+    domains: [www.gjxfj.gov.cn, gjxfj.gov.cn]
+    aliases: [国家信访局]
+    use_for: [policy]
+  - name: 最高人民法院
+    tier: gov_original
+    domains: [www.court.gov.cn, court.gov.cn]
+    aliases: [最高人民法院]
+    use_for: [scam, news]
+  - name: 最高人民检察院
+    tier: gov_original
+    domains: [www.spp.gov.cn, spp.gov.cn]
+    aliases: [最高人民检察院]
+    use_for: [scam, news]
+
+  # ── national_media：国家级官媒 ──
+  - name: 新华社
+    tier: national_media
+    domains: [www.news.cn, news.cn, www.xinhuanet.com, xinhuanet.com]
+    aliases: [新华社, 新华网, 新华每日电讯, 新华视点]
+    use_for: [policy, health, scam, news]
+  - name: 人民日报
+    tier: national_media
+    domains: [www.people.com.cn, people.com.cn, paper.people.com.cn]
+    aliases: [人民日报, 人民网, 人民日报客户端]
+    use_for: [policy, health, scam, news]
+  - name: 中央广播电视总台
+    tier: national_media
+    domains: [www.cctv.com, cctv.com, news.cctv.com, www.cnr.cn, cnr.cn, content-static.cctvnews.cctv.com]
+    aliases: [中央广播电视总台, 央视新闻, 央视网, CCTV, 央广网, 中国之声]
+    use_for: [policy, health, scam, news]
+  - name: 中国新闻社
+    tier: national_media
+    domains: [www.chinanews.com, chinanews.com, www.chinanews.com.cn, chinanews.com.cn]
+    aliases: [中国新闻社, 中国新闻网, 中新网, 中新经纬]
+    use_for: [policy, health, scam, news]
+  - name: 光明日报
+    tier: national_media
+    domains: [www.gmw.cn, gmw.cn]
+    aliases: [光明日报, 光明网]
+    use_for: [policy, health, news]
+  - name: 经济日报
+    tier: national_media
+    domains: [www.ce.cn, ce.cn]
+    aliases: [经济日报, 中国经济网]
+    use_for: [policy, scam, news]
+  - name: 中国日报
+    tier: national_media
+    domains: [www.chinadaily.com.cn, chinadaily.com.cn]
+    aliases: [中国日报, 中国日报网, China Daily]
+    use_for: [policy, news]
+  - name: 科技日报
+    tier: national_media
+    domains: [www.stdaily.com, stdaily.com]
+    aliases: [科技日报, 中国科技网]
+    use_for: [health, news]
+  - name: 中国青年报
+    tier: national_media
+    domains: [www.cyol.com, cyol.com, www.youth.cn, youth.cn]
+    aliases: [中国青年报, 中青在线, 中国青年网]
+    use_for: [policy, news]
+  - name: 法治日报
+    tier: national_media
+    domains: [www.legaldaily.com.cn, legaldaily.com.cn]
+    aliases: [法治日报, 法制日报, 法治网]
+    use_for: [scam, news]
+  - name: 检察日报
+    tier: national_media
+    domains: [www.jcrb.com, jcrb.com]
+    aliases: [检察日报, 正义网]
+    use_for: [scam, news]
+  - name: 人民公安报
+    tier: national_media
+    domains: [www.cpd.com.cn, cpd.com.cn]
+    aliases: [人民公安报, 中国警察网]
+    use_for: [scam, news]
+  - name: 环球时报
+    tier: national_media
+    domains: [www.huanqiu.com, huanqiu.com]
+    aliases: [环球时报, 环球网]
+    use_for: [news]
+  - name: 参考消息
+    tier: national_media
+    domains: [www.cankaoxiaoxi.com, cankaoxiaoxi.com]
+    aliases: [参考消息]
+    use_for: [news]
+  - name: 半月谈
+    tier: national_media
+    domains: [www.banyuetan.org, banyuetan.org]
+    aliases: [半月谈]
+    use_for: [policy, news]
+  - name: 求是
+    tier: national_media
+    domains: [www.qstheory.cn, qstheory.cn]
+    aliases: [求是, 求是网, 求是杂志]
+    use_for: [policy]
+  - name: 解放军报
+    tier: national_media
+    domains: [www.81.cn, 81.cn]
+    aliases: [解放军报, 中国军网]
+    use_for: [news]
+  - name: 工人日报
+    tier: national_media
+    domains: [www.workercn.cn, workercn.cn]
+    aliases: [工人日报, 中工网]
+    use_for: [policy, news]
+  - name: 农民日报
+    tier: national_media
+    domains: [www.farmer.com.cn, farmer.com.cn]
+    aliases: [农民日报]
+    use_for: [policy, news]
+  - name: 中国妇女报
+    tier: national_media
+    domains: [www.cnwomen.com.cn, cnwomen.com.cn]
+    aliases: [中国妇女报]
+    use_for: [policy, news]
+  - name: 人民法院报
+    tier: national_media
+    domains: [www.chinacourt.org, chinacourt.org]
+    aliases: [人民法院报, 中国法院网]
+    use_for: [scam, news]
+  - name: 中国证券报
+    tier: national_media
+    domains: [www.cs.com.cn, cs.com.cn]
+    aliases: [中国证券报, 中证网]
+    use_for: [policy, scam]
+  - name: 上海证券报
+    tier: national_media
+    domains: [www.cnstock.com, cnstock.com]
+    aliases: [上海证券报, 中国证券网, 上证报]
+    use_for: [policy, scam]
+  - name: 证券时报
+    tier: national_media
+    domains: [www.stcn.com, stcn.com]
+    aliases: [证券时报]
+    use_for: [policy, scam]
+  - name: 科普中国
+    tier: national_media
+    domains: [www.kepuchina.cn, kepuchina.cn]
+    aliases: [科普中国]
+    use_for: [health, news]
+  - name: 中国互联网联合辟谣平台
+    tier: national_media
+    domains: [www.piyao.org.cn, piyao.org.cn]
+    aliases: [中国互联网联合辟谣平台, 联合辟谣平台]
+    use_for: [policy, news, scam]
+  - name: 科学辟谣平台
+    tier: national_media
+    domains: [piyao.kepuchina.cn]
+    aliases: [科学辟谣, 科学辟谣平台]
+    use_for: [health, news]
+
+  # ── provincial_media：省级党报党台 + 有编辑责任的市场化官媒 ──
+  - name: 北京日报
+    tier: provincial_media
+    domains: [www.bjd.com.cn, bjd.com.cn, news.bjd.com.cn]
+    aliases: [北京日报, 北京晚报]
+    use_for: [policy, health, scam, news]
+  - name: 解放日报·上观新闻
+    tier: provincial_media
+    domains: [www.shobserver.com, shobserver.com, www.jfdaily.com]
+    aliases: [解放日报, 上观新闻]
+    use_for: [policy, health, scam, news]
+  - name: 澎湃新闻
+    tier: provincial_media
+    domains: [www.thepaper.cn, thepaper.cn]
+    aliases: [澎湃新闻, 澎湃]
+    use_for: [policy, health, scam, news]
+  - name: 界面新闻
+    tier: provincial_media
+    domains: [www.jiemian.com, jiemian.com]
+    aliases: [界面新闻, 界面]
+    use_for: [policy, news]
+  - name: 财新网
+    tier: provincial_media
+    domains: [www.caixin.com, caixin.com]
+    aliases: [财新, 财新网]
+    use_for: [policy, scam, news]
+  - name: 第一财经
+    tier: provincial_media
+    domains: [www.yicai.com, yicai.com]
+    aliases: [第一财经, 一财]
+    use_for: [policy, scam]
+  - name: 南方日报·南方网
+    tier: provincial_media
+    domains: [www.southcn.com, southcn.com]
+    aliases: [南方日报, 南方网, 南方+, 南方都市报, 南方周末]
+    use_for: [policy, health, scam, news]
+  - name: 羊城晚报
+    tier: provincial_media
+    domains: [www.ycwb.com, ycwb.com]
+    aliases: [羊城晚报, 金羊网]
+    use_for: [policy, health, news]
+  - name: 浙江日报·潮新闻
+    tier: provincial_media
+    domains: [www.zjol.com.cn, zjol.com.cn, www.tidenews.com.cn]
+    aliases: [浙江日报, 浙江在线, 潮新闻, 钱江晚报]
+    use_for: [policy, health, news]
+  - name: 新华日报
+    tier: provincial_media
+    domains: [www.xhby.net, xhby.net]
+    aliases: [新华日报, 交汇点新闻]
+    use_for: [policy, health, news]
+  - name: 四川日报·川观新闻
+    tier: provincial_media
+    domains: [www.scol.com.cn, scol.com.cn]
+    aliases: [四川日报, 四川在线, 川观新闻, 华西都市报, 封面新闻]
+    use_for: [policy, health, news]
+  - name: 河南日报·大象新闻
+    tier: provincial_media
+    domains: [www.dahe.cn, dahe.cn, www.hntv.tv]
+    aliases: [河南日报, 大河网, 大象新闻, 河南广播电视台]
+    use_for: [policy, health, news]
+  - name: 湖北日报
+    tier: provincial_media
+    domains: [www.cnhubei.com, cnhubei.com]
+    aliases: [湖北日报, 荆楚网, 楚天都市报]
+    use_for: [policy, health, news]
+  - name: 湖南日报·红网
+    tier: provincial_media
+    domains: [www.rednet.cn, rednet.cn]
+    aliases: [湖南日报, 红网, 时刻新闻]
+    use_for: [policy, health, news]
+  - name: 大众日报
+    tier: provincial_media
+    domains: [www.dzwww.com, dzwww.com]
+    aliases: [大众日报, 大众网, 齐鲁晚报, 齐鲁网]
+    use_for: [policy, health, news]
+  - name: 福建日报·东南网
+    tier: provincial_media
+    domains: [www.fjsen.com, fjsen.com]
+    aliases: [福建日报, 东南网]
+    use_for: [policy, health, news]
+  - name: 安徽日报·中安在线
+    tier: provincial_media
+    domains: [www.anhuinews.com, anhuinews.com]
+    aliases: [安徽日报, 中安在线]
+    use_for: [policy, news]
+  - name: 河北日报·河北新闻网
+    tier: provincial_media
+    domains: [www.hebnews.cn, hebnews.cn]
+    aliases: [河北日报, 河北新闻网, 燕赵都市报]
+    use_for: [policy, news]
+  - name: 辽宁日报·东北新闻网
+    tier: provincial_media
+    domains: [www.nen.com.cn, nen.com.cn]
+    aliases: [辽宁日报, 东北新闻网]
+    use_for: [policy, news]
+  - name: 吉林日报·中国吉林网
+    tier: provincial_media
+    domains: [www.chinajilin.com.cn, chinajilin.com.cn]
+    aliases: [吉林日报, 中国吉林网]
+    use_for: [policy, news]
+  - name: 黑龙江日报·东北网
+    tier: provincial_media
+    domains: [www.dbw.cn, dbw.cn]
+    aliases: [黑龙江日报, 东北网, 生活报]
+    use_for: [policy, news]
+  - name: 江西日报·大江网
+    tier: provincial_media
+    domains: [www.jxnews.com.cn, jxnews.com.cn]
+    aliases: [江西日报, 大江网]
+    use_for: [policy, news]
+  - name: 广西日报·广西新闻网
+    tier: provincial_media
+    domains: [www.gxnews.com.cn, gxnews.com.cn]
+    aliases: [广西日报, 广西新闻网]
+    use_for: [policy, news]
+  - name: 海南日报·南海网
+    tier: provincial_media
+    domains: [www.hinews.cn, hinews.cn]
+    aliases: [海南日报, 南海网]
+    use_for: [policy, news]
+  - name: 贵州日报·天眼新闻
+    tier: provincial_media
+    domains: [www.gog.cn, gog.cn]
+    aliases: [贵州日报, 多彩贵州网, 天眼新闻]
+    use_for: [policy, news]
+  - name: 云南日报·云南网
+    tier: provincial_media
+    domains: [www.yunnan.cn, yunnan.cn]
+    aliases: [云南日报, 云南网, 春城晚报]
+    use_for: [policy, news]
+  - name: 甘肃日报·每日甘肃网
+    tier: provincial_media
+    domains: [www.gansudaily.com.cn, gansudaily.com.cn]
+    aliases: [甘肃日报, 每日甘肃网]
+    use_for: [policy, news]
+  - name: 青海日报·青海新闻网
+    tier: provincial_media
+    domains: [www.qhnews.com, qhnews.com]
+    aliases: [青海日报, 青海新闻网]
+    use_for: [policy, news]
+  - name: 宁夏日报·宁夏新闻网
+    tier: provincial_media
+    domains: [www.nxnews.net, nxnews.net]
+    aliases: [宁夏日报, 宁夏新闻网]
+    use_for: [policy, news]
+  - name: 新疆日报·天山网
+    tier: provincial_media
+    domains: [www.ts.cn, ts.cn]
+    aliases: [新疆日报, 天山网]
+    use_for: [policy, news]
+  - name: 西藏日报·中国西藏新闻网
+    tier: provincial_media
+    domains: [www.xzxw.com, xzxw.com]
+    aliases: [西藏日报, 中国西藏新闻网]
+    use_for: [policy, news]
+  - name: 内蒙古日报·正北方网
+    tier: provincial_media
+    domains: [www.northnews.cn, northnews.cn]
+    aliases: [内蒙古日报, 正北方网]
+    use_for: [policy, news]
+  - name: 山西日报·山西新闻网
+    tier: provincial_media
+    domains: [www.sxgov.cn, sxgov.cn]
+    aliases: [山西日报, 山西新闻网, 黄河新闻网]
+    use_for: [policy, news]
+  - name: 陕西日报·群众新闻网
+    tier: provincial_media
+    domains: [www.cnwest.com, cnwest.com]
+    aliases: [陕西日报, 西部网, 群众新闻网, 三秦都市报]
+    use_for: [policy, news]
+  - name: 天津日报·北方网
+    tier: provincial_media
+    domains: [www.enorth.com.cn, enorth.com.cn]
+    aliases: [天津日报, 北方网, 今晚报]
+    use_for: [policy, news]
+  - name: 重庆日报·上游新闻
+    tier: provincial_media
+    domains: [www.cqnews.net, cqnews.net, www.cqcb.com]
+    aliases: [重庆日报, 华龙网, 上游新闻]
+    use_for: [policy, news]
+  - name: 凤凰卫视·凤凰网
+    tier: provincial_media
+    domains: [www.ifeng.com, ifeng.com, news.ifeng.com]
+    aliases: [凤凰网, 凤凰卫视, 凤凰新闻]
+    use_for: [policy, health, news]
+  - name: 新京报
+    tier: provincial_media
+    domains: [www.bjnews.com.cn, bjnews.com.cn]
+    aliases: [新京报]
+    use_for: [policy, health, news]
+  - name: 广州日报
+    tier: provincial_media
+    domains: [www.dayoo.com, dayoo.com]
+    aliases: [广州日报, 大洋网]
+    use_for: [policy, health, news]
+  - name: 深圳特区报·读特
+    tier: provincial_media
+    domains: [www.sznews.com, sznews.com]
+    aliases: [深圳特区报, 深圳新闻网, 读特, 深圳商报, 晶报]
+    use_for: [policy, health, news]
+  - name: 成都商报·红星新闻
+    tier: provincial_media
+    domains: [www.cdss.com.cn, www.thecover.cn, thecover.cn]
+    aliases: [成都商报, 红星新闻, 封面新闻]
+    use_for: [policy, health, news]
+
+  # ── local_official：地市级官方（党报/广电/政府发布）──
+  # 说明：地市县政府网站统一由 *.gov.cn 泛匹配覆盖（gov_original），
+  # 此处只登记地市级党报党台域名 + 官方发布账号别名
+  - name: 杭州日报
+    tier: local_official
+    domains: [www.hangzhou.com.cn, hangzhou.com.cn]
+    aliases: [杭州日报, 杭州网, 都市快报, 杭州发布]
+    use_for: [policy, health, news]
+  - name: 宁波日报
+    tier: local_official
+    domains: [www.cnnb.com.cn, cnnb.com.cn]
+    aliases: [宁波日报, 中国宁波网, 宁波晚报, 宁波发布]
+    use_for: [policy, news]
+  - name: 厦门日报
+    tier: local_official
+    domains: [www.xmnn.cn, xmnn.cn]
+    aliases: [厦门日报, 厦门网, 厦门发布]
+    use_for: [policy, news]
+  - name: 青岛日报·观海新闻
+    tier: local_official
+    domains: [www.qingdaonews.com, qingdaonews.com]
+    aliases: [青岛日报, 青岛新闻网, 观海新闻, 青岛发布]
+    use_for: [policy, news]
+  - name: 大连日报
+    tier: local_official
+    domains: [www.dlxww.com, dlxww.com]
+    aliases: [大连日报, 大连新闻网, 大连发布]
+    use_for: [policy, news]
+  - name: 苏州日报
+    tier: local_official
+    domains: [www.suzhou.gov.cn, www.suzhou.com.cn]
+    aliases: [苏州日报, 姑苏晚报, 苏州发布]
+    use_for: [policy, news]
+  - name: 无锡日报
+    tier: local_official
+    domains: [www.wxrb.com, wxrb.com]
+    aliases: [无锡日报, 江南晚报, 无锡发布]
+    use_for: [policy, news]
+  - name: 佛山日报·佛山+
+    tier: local_official
+    domains: [www.fsonline.com.cn, fsonline.com.cn]
+    aliases: [佛山日报, 珠江时报, 佛山发布]
+    use_for: [policy, news]
+  - name: 东莞日报
+    tier: local_official
+    domains: [www.timedg.com, timedg.com]
+    aliases: [东莞日报, 东莞时间网, 东莞发布]
+    use_for: [policy, news]
+  - name: 惠州日报
+    tier: local_official
+    domains: [www.hznews.com, hznews.com]
+    aliases: [惠州日报, 惠州新闻网, 惠州发布]
+    use_for: [policy, news]
+  - name: 珠海特区报
+    tier: local_official
+    domains: [www.hizh.cn, hizh.cn]
+    aliases: [珠海特区报, 珠海新闻网, 珠海发布]
+    use_for: [policy, news]
+  - name: 中山日报
+    tier: local_official
+    domains: [www.zsnews.cn, zsnews.cn]
+    aliases: [中山日报, 中山网, 中山发布]
+    use_for: [policy, news]
+  - name: 温州日报
+    tier: local_official
+    domains: [www.wzrb.com.cn, wzrb.com.cn]
+    aliases: [温州日报, 温州网, 温州发布]
+    use_for: [policy, news]
+  - name: 泉州晚报·泉州网
+    tier: local_official
+    domains: [www.qzwb.com, qzwb.com]
+    aliases: [泉州晚报, 泉州网, 泉州发布]
+    use_for: [policy, news]
+  - name: 长沙晚报·掌上长沙
+    tier: local_official
+    domains: [www.csnews.com.cn, csnews.com.cn, www.changsha.cn]
+    aliases: [长沙晚报, 掌上长沙, 长沙发布, 星辰在线]
+    use_for: [policy, news]
+  - name: 武汉长江日报
+    tier: local_official
+    domains: [www.cjn.cn, cjn.cn]
+    aliases: [长江日报, 长江网, 大武汉客户端, 武汉发布]
+    use_for: [policy, news]
+  - name: 郑州日报·正观新闻
+    tier: local_official
+    domains: [www.zynews.cn, zynews.cn]
+    aliases: [郑州日报, 正观新闻, 郑州发布]
+    use_for: [policy, news]
+  - name: 西安日报·西安新闻网
+    tier: local_official
+    domains: [www.xawb.com, xawb.com]
+    aliases: [西安日报, 西安晚报, 西安新闻网, 西安发布]
+    use_for: [policy, news]
+  - name: 成都日报·锦观新闻
+    tier: local_official
+    domains: [www.cdrb.com.cn, cdrb.com.cn]
+    aliases: [成都日报, 锦观新闻, 成都发布]
+    use_for: [policy, news]
+  - name: 济南日报·爱济南
+    tier: local_official
+    domains: [www.e23.cn, e23.cn]
+    aliases: [济南日报, 爱济南, 济南时报, 济南发布]
+    use_for: [policy, news]
+  - name: 南京日报·紫金山新闻
+    tier: local_official
+    domains: [www.njdaily.cn, njdaily.cn]
+    aliases: [南京日报, 紫金山新闻, 金陵晚报, 南京发布]
+    use_for: [policy, news]
+  - name: 合肥日报·合肥在线
+    tier: local_official
+    domains: [www.hf365.com, hf365.com]
+    aliases: [合肥日报, 合肥在线, 江淮晨报, 合肥发布]
+    use_for: [policy, news]
+  - name: 福州日报·福州新闻网
+    tier: local_official
+    domains: [www.fznews.com.cn, fznews.com.cn]
+    aliases: [福州日报, 福州晚报, 福州新闻网, 福州发布]
+    use_for: [policy, news]
+  - name: 南昌日报·南昌新闻网
+    tier: local_official
+    domains: [www.ncnews.com.cn, ncnews.com.cn]
+    aliases: [南昌日报, 南昌新闻网, 南昌发布]
+    use_for: [policy, news]
+  - name: 昆明日报·掌上春城
+    tier: local_official
+    domains: [www.kunming.cn, kunming.cn]
+    aliases: [昆明日报, 掌上春城, 昆明信息港, 昆明发布]
+    use_for: [policy, news]
+  - name: 贵阳日报·贵阳网
+    tier: local_official
+    domains: [www.gywb.cn, gywb.cn]
+    aliases: [贵阳日报, 贵阳晚报, 贵阳网, 贵阳发布]
+    use_for: [policy, news]
+  - name: 南宁日报·南宁云
+    tier: local_official
+    domains: [www.nnrb.com.cn, nnrb.com.cn]
+    aliases: [南宁日报, 南宁晚报, 南宁发布]
+    use_for: [policy, news]
+  - name: 太原日报·太原新闻网
+    tier: local_official
+    domains: [www.tynews.com.cn, tynews.com.cn]
+    aliases: [太原日报, 太原晚报, 太原新闻网, 太原发布]
+    use_for: [policy, news]
+  - name: 石家庄日报·燕赵晚报
+    tier: local_official
+    domains: [www.sjzdaily.com.cn, sjzdaily.com.cn]
+    aliases: [石家庄日报, 燕赵晚报, 石家庄发布]
+    use_for: [policy, news]
+  - name: 沈阳日报·沈阳网
+    tier: local_official
+    domains: [www.syd.com.cn, syd.com.cn]
+    aliases: [沈阳日报, 沈阳晚报, 沈阳网, 沈阳发布]
+    use_for: [policy, news]
+  - name: 长春日报·长春新闻网
+    tier: local_official
+    domains: [www.ccrb.cn, ccrb.cn]
+    aliases: [长春日报, 长春晚报, 长春发布]
+    use_for: [policy, news]
+  - name: 哈尔滨日报·冰城+
+    tier: local_official
+    domains: [www.harbindaily.com, harbindaily.com, www.my399.com]
+    aliases: [哈尔滨日报, 新晚报, 冰城+, 哈尔滨发布]
+    use_for: [policy, news]
+  - name: 兰州日报·兰州新闻网
+    tier: local_official
+    domains: [www.lznews.cn, lznews.cn]
+    aliases: [兰州日报, 兰州晚报, 兰州新闻网, 兰州发布]
+    use_for: [policy, news]
+  - name: 乌鲁木齐晚报
+    tier: local_official
+    domains: [www.wlmqwb.com, wlmqwb.com]
+    aliases: [乌鲁木齐晚报, 乌鲁木齐发布]
+    use_for: [policy, news]
+  - name: 海口日报·海口网
+    tier: local_official
+    domains: [www.hkwb.net, hkwb.net]
+    aliases: [海口日报, 海口网, 海口发布]
+    use_for: [policy, news]
+  - name: 呼和浩特日报·正北方网呼和浩特
+    tier: local_official
+    domains: [www.hhhtnews.com, hhhtnews.com]
+    aliases: [呼和浩特日报, 呼和浩特晚报, 呼和浩特发布]
+    use_for: [policy, news]
+  - name: 银川日报·银川新闻网
+    tier: local_official
+    domains: [www.ycnews.cn, ycnews.cn]
+    aliases: [银川日报, 银川晚报, 银川新闻网, 银川发布]
+    use_for: [policy, news]
+  - name: 西宁晚报
+    tier: local_official
+    domains: [www.xnwbw.com, xnwbw.com]
+    aliases: [西宁晚报, 西宁发布]
+    use_for: [policy, news]
+  - name: 拉萨日报
+    tier: local_official
+    domains: [www.lasa.gov.cn]
+    aliases: [拉萨日报, 拉萨晚报, 拉萨发布]
+    use_for: [policy, news]
+  - name: 洛阳日报·掌上洛阳
+    tier: local_official
+    domains: [www.lyrb.com.cn, lyrb.com.cn]
+    aliases: [洛阳日报, 洛阳晚报, 掌上洛阳, 洛阳发布]
+    use_for: [policy, news]
+  - name: 烟台日报·大小新闻
+    tier: local_official
+    domains: [www.ytrb.com.cn, ytrb.com.cn]
+    aliases: [烟台日报, 大小新闻, 烟台发布]
+    use_for: [policy, news]
+  - name: 徐州日报·汉风号
+    tier: local_official
+    domains: [www.xzrb.com.cn, xzrb.com.cn]
+    aliases: [徐州日报, 彭城晚报, 汉风号, 徐州发布]
+    use_for: [policy, news]
+
+# ── 开放搜索采纳分级（PRD 5.3）：后缀泛匹配兜底 ──
+# 凡 .gov.cn 一律视为 gov_original（覆盖未单列的部委/省/市/县政府网站）
+# 凡 .edu.cn 一律视为 institution（高校/科研机构，需 evidence-v1 二次判断）
+qualified_open_web_patterns:
+  - suffix: .gov.cn
+    tier: gov_original
+  - suffix: .edu.cn
+    tier: provincial_media
+
+# ── 永不采纳（PRD 5.3）：个人账号、自媒体、营销页、论坛、聚合转载 ──
+blocked_domains:
+  - baijiahao.baidu.com
+  - www.toutiao.com
+  - toutiao.com
+  - zhihu.com
+  - www.zhihu.com
+  - tieba.baidu.com
+  - baike.baidu.com
+  - www.sohu.com/a
+  - dy.163.com
+  - kuaibao.qq.com
+  - new.qq.com/omn
+  - www.163.com/dy
+  - 3g.k.sohu.com
+  - mk.mbd.baidu.com
+  - author.baidu.com
+  - xueqiu.com
+  - www.douban.com
+  - www.xiaohongshu.com
+  - weibo.com
+# 注意：mp.weixin.qq.com 不 block——政务新媒体（健康中国、国家反诈中心等）常以公众号发布，
+# 但个人公众号泛滥，默认不合格，仅在抓正文后能确认官方账号主体时才采纳（第三级兜底判断）

@@ -1,0 +1,108 @@
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    font-family: var(--font-display);
+    -webkit-font-smoothing: antialiased;
+  }
+  html {
+    background: var(--surface-warm);
+  }
+  body {
+    margin: 0;
+    background: var(--surface-warm);
+    color: var(--fg);
+  }
+  /* 处理中页 loader 旋转；reduced-motion 时停止 */
+  @keyframes mb-spin {
+    to { transform: rotate(360deg); }
+  }
+  .mb-spin {
+    animation: mb-spin 1.2s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mb-spin { animation: none; }
+  }
+}
+
+@layer components {
+  /* 420px 单栏居中容器（桌面同样居中手机宽度） */
+  .page-shell {
+    @apply w-full max-w-container mx-auto bg-bg min-h-dvh;
+  }
+  .page-inner {
+    @apply px-6 pt-6 pb-8;
+  }
+  .upload-layout {
+    height: 100vh;
+    height: 100dvh;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    overflow: hidden;
+  }
+  .upload-scroll-region {
+    @apply overflow-y-auto px-6 pt-6 pb-4;
+    overscroll-behavior: contain;
+  }
+  .upload-action-region {
+    @apply bg-bg px-6 pt-3;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -8px 24px rgba(31, 42, 55, 0.06);
+    position: relative;
+    z-index: 2;
+  }
+  .scope-row {
+    @apply flex items-center gap-3.5 py-2.5;
+  }
+  .scope-row p {
+    @apply m-0 text-base leading-body;
+  }
+  .scope-icon {
+    @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-sm bg-accent-soft text-accent;
+  }
+  .scope-limit-note {
+    @apply mt-3.5 flex items-center gap-2.5 rounded-md border border-border-soft bg-surface-warm px-3.5 py-3 text-muted;
+  }
+  .scope-limit-note p {
+    @apply m-0 text-sm leading-body;
+  }
+  .scope-limit-dot {
+    @apply flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full border border-meta text-[11px] font-bold leading-none text-meta;
+  }
+  .scope-limit-note p {
+    font-size: 13px;
+    line-height: 1.35;
+    white-space: nowrap;
+  }
+  .privacy-note {
+    @apply mb-0 mt-3 text-center text-muted;
+    font-size: 12px;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+  /* 适老按钮：主按钮 60px / 20px 700 */
+  .btn-primary {
+    @apply flex w-full items-center justify-center gap-2.5 min-h-touch-primary
+      rounded-md bg-accent text-accent-on text-lg font-bold
+      transition-colors duration-fast ease-standard
+      hover:bg-accent-hover active:bg-accent-active
+      focus-visible:outline-none;
+  }
+  .btn-primary:focus-visible {
+    box-shadow: var(--focus-ring);
+  }
+  .btn-secondary {
+    @apply flex w-full items-center justify-center gap-2.5 min-h-touch-primary
+      rounded-md border-2 border-accent bg-surface text-accent text-lg font-bold
+      transition-colors duration-fast ease-standard
+      hover:bg-accent-soft
+      focus-visible:outline-none;
+  }
+  .btn-secondary:focus-visible {
+    box-shadow: var(--focus-ring);
+  }
+}

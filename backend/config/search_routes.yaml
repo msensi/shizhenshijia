@@ -1,0 +1,58 @@
+# 联网检索来源路由（v1）
+#
+# 模型不能自行决定检索网站。程序根据唯一核验对象选择一条路线，
+# 仅把该路线的 3～5 个优先站点交给千问内置联网搜索。
+# 若首轮没有可采纳证据，编排层才启用一次不限定站点的权威兜底搜索，
+# 其结果仍须通过 source_registry.yaml 的来源、作者和证据关系校验。
+version: 1
+
+routes:
+  - key: policy_government_report
+    domain: policy
+    priority: 100
+    keywords: [政府工作报告, 国务院办公厅, 国务院常务会议]
+    sites: [www.gov.cn, www.news.cn, www.people.com.cn, www.cnr.cn, news.cctv.com]
+
+  - key: policy_pension_social_security
+    domain: policy
+    priority: 90
+    keywords: [基础养老金, 养老金, 养老保险, 社保, 社会保险, 退休金, 社保卡]
+    # 养老金金额常由权威媒体对政府报告作口径解读，因此保留人社部，
+    # 并加入新华社、央广网做数字交叉核对。
+    sites: [www.gov.cn, www.mohrss.gov.cn, www.people.com.cn, www.news.cn, www.cnr.cn]
+
+  - key: policy_medical_insurance
+    domain: policy
+    priority: 90
+    keywords: [医保, 医疗保险, 报销, 长护险, 长期护理保险, 集采]
+    sites: [www.gov.cn, www.nhsa.gov.cn, www.nhc.gov.cn, www.mof.gov.cn, www.people.com.cn]
+
+  - key: policy_subsidy_welfare
+    domain: policy
+    priority: 80
+    keywords: [补贴, 津贴, 低保, 高龄, 福利, 领取, 认证, 年审]
+    sites: [www.gov.cn, www.mca.gov.cn, www.mohrss.gov.cn, www.mof.gov.cn, www.people.com.cn]
+
+  - key: policy_public_service
+    domain: policy
+    priority: 1
+    keywords: []
+    sites: [www.gov.cn, www.news.cn, www.people.com.cn, news.cctv.com, www.cnr.cn]
+
+  - key: health_medical
+    domain: health
+    priority: 1
+    keywords: []
+    sites: [www.nhc.gov.cn, www.nhsa.gov.cn, www.nmpa.gov.cn, www.chinacdc.cn, piyao.kepuchina.cn]
+
+  - key: scam_financial
+    domain: scam
+    priority: 1
+    keywords: []
+    sites: [www.mps.gov.cn, www.cac.gov.cn, www.pbc.gov.cn, www.nfra.gov.cn, www.csrc.gov.cn]
+
+  - key: news_public_event
+    domain: news
+    priority: 1
+    keywords: []
+    sites: [www.news.cn, www.people.com.cn, news.cctv.com, www.cnr.cn, www.gov.cn]
